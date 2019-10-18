@@ -1,4 +1,8 @@
-import { LookerEmbedSDK, LookerEmbedLook, LookerEmbedDashboard } from '../src/index'
+import {
+  LookerEmbedSDK,
+  LookerEmbedLook,
+  LookerEmbedDashboard
+} from "../src/index";
 
 /*
  * The MIT License (MIT)
@@ -24,84 +28,73 @@ import { LookerEmbedSDK, LookerEmbedLook, LookerEmbedDashboard } from '../src/in
  * THE SOFTWARE.
  */
 
-import { lookerHost, dashboardId, lookId } from './demo_config'
+import { lookerHost, dashboardId } from "./demo_config";
 
-LookerEmbedSDK.init(lookerHost, '/auth')
+LookerEmbedSDK.init(lookerHost, "/auth");
 
+/*
 const setupDashboard = (dashboard: LookerEmbedDashboard) => {
-  const runButton = document.querySelector('#run')
-  if (runButton) {
-    runButton.addEventListener('click', () => dashboard.run())
-  }
-  const stateFilter = document.querySelector('#state')
-  if (stateFilter) {
-    stateFilter.addEventListener('change', (event) => {
-      dashboard.updateFilters({ 'State / Region': (event.target as HTMLSelectElement).value })
-    })
-  }
-}
-
-const setupLook = (look: LookerEmbedLook) => {
-  const runButton = document.querySelector('#run')
-  if (runButton) {
-    runButton.addEventListener('click', () => look.run())
-  }
-  const stateFilter = document.querySelector('#state')
-  if (stateFilter) {
-    stateFilter.addEventListener('change', (event) => {
-      look.updateFilters({ 'users.state': (event.target as HTMLSelectElement).value })
-    })
-  }
-}
+  debugger;
+  dashboard.updateFilters({
+    "Location": "1-800 Self-Storage.com"
+  });
+};
+*/
 
 const updateState = (selector: string, state: string) => {
-  const dashboardState = document.querySelector(selector)
+  debugger;
+  const dashboardState = document.querySelector(selector);
   if (dashboardState) {
-    dashboardState.textContent = state
+    dashboardState.textContent = state;
   }
-}
+};
 
 const canceller = (event: any) => {
-  updateState('#dashboard-state', `${event.label} clicked`)
-  return { cancel: !event.modal }
-}
+  updateState("#dashboard-state", `${event.label} clicked`);
+  return { cancel: !event.modal };
+};
 
-document.addEventListener('DOMContentLoaded', function () {
+const setupDashboard = (dashboard: LookerEmbedDashboard) => {
+  debugger;
+
+  /*
+  document.querySelector('#run').addEventListener('click', () => {
+    dashboard.send('dashboard:run')
+  });
+  debugger;
+
+   */
+  console.log("Promised resolved??");
+};
+
+document.addEventListener("DOMContentLoaded", function() {
   if (dashboardId) {
-    LookerEmbedSDK.createDashboardWithId(dashboardId)
-      .appendTo('#dashboard')
-      .on('dashboard:run:start', () => updateState('#dashboard-state', 'Running'))
-      .on('dashboard:run:complete', () => updateState('#dashboard-state', 'Done'))
-      .on('drillmenu:click', canceller)
-      .on('drillmodal:explore', canceller)
-      .on('dashboard:tile:explore', canceller)
-      .on('dashboard:tile:view', canceller)
-      .withClassName('looker-embed')
-      .withFilters({ 'State / Region': 'California' })
-      .build()
-      .connect()
+    let dashboard = LookerEmbedSDK.createDashboardWithId(dashboardId)
+      .appendTo("#dashboard")
+      .withClassName("looker-embed")
+      .build();
+
+    let connected = dashboard.connect();
+
+    debugger;
+
+    /*
+    dashboard.then(setupDashboard).finally(() => {
+      debugger;
+    });
+    */
+
+    /*
       .then(setupDashboard)
       .catch((error: Error) => {
-        console.error('Connection error', error)
+        console.error("Connection error", error);
       })
+      .finally(() => {
+        console.log("WTF");
+      });
+      */
   } else {
-    document.querySelector<HTMLDivElement>('#demo-dashboard')!.style.display = 'none'
+    document.querySelector<HTMLDivElement>("#demo-dashboard")!.style.display =
+      "none";
   }
-
-  if (lookId) {
-    LookerEmbedSDK.createLookWithId(lookId)
-      .appendTo('#look')
-      .on('look:run:start', () => updateState('#look-state', 'Running'))
-      .on('look:run:complete', () => updateState('#look-state', 'Done'))
-      .withClassName('looker-embed')
-      .withFilters({ 'users.state': 'California' })
-      .build()
-      .connect()
-      .then(setupLook)
-      .catch((error: Error) => {
-        console.error('Connection error', error)
-      })
-  } else {
-    document.querySelector<HTMLDivElement>('#demo-look')!.style.display = 'none'
-  }
-})
+});

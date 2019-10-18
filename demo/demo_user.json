@@ -1,19 +1,24 @@
 {
-  "external_user_id": "user1",
-  "first_name": "Pat",
-  "last_name": "Embed",
-  "session_length": 3600,
-  "force_logout_login": true,
-  "external_group_id": "group1",
-  "group_ids": [],
   "permissions": [
     "access_data",
     "see_looks",
     "see_user_dashboards",
+    "download_without_limit",
+    "see_drill_overlay",
     "explore",
     "save_content",
     "embed_browse_spaces"
   ],
-  "models": ["powered_by", "thelook"],
-  "user_attributes": { "locale": "en_US" }
+  "models": ["g5rocks"],
+  "group_ids": [3],
+  "user_attributes": {
+    "allowed_client_urns": "%",
+    "allowed_location_urns": ""
+  },
+  "external_user_id": "uid-g5-embed",
+  "first_name": "Embed G5",
+  "last_name": "User",
+  "access_filters": {},
+  "session_length": 3600,
+  "force_logout_login": true
 }

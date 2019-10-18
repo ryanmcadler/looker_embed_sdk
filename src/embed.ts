@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  */
 
-import { EmbedBuilder } from './embed_builder'
-import { Chatty, ChattyHost, ChattyHostBuilder } from '@looker/chatty'
+import { EmbedBuilder } from "./embed_builder";
+import { Chatty, ChattyHost, ChattyHostBuilder } from "@looker/chatty";
 
 /**
  * Wrapper for Looker embedded content. Provides a mechanism for creating the embedded content element,
@@ -31,79 +31,82 @@ import { Chatty, ChattyHost, ChattyHostBuilder } from '@looker/chatty'
  */
 
 export class EmbedClient<T> {
-  _hostBuilder: ChattyHostBuilder | null = null
-  _host: ChattyHost | null = null
-  _connection: Promise<T> | null = null
+  _hostBuilder: ChattyHostBuilder | null = null;
+  _host: ChattyHost | null = null;
+  _connection: Promise<T> | null = null;
 
   /**
    * @hidden
    */
 
-  constructor (private _builder: EmbedBuilder<T>) {}
+  constructor(private _builder: EmbedBuilder<T>) {}
 
   /**
    * Returns a promise that resolves to a client that can be used to send messages to the
    * embedded content.
    */
 
-  get connection () {
-    return this._connection
+  get connection() {
+    return this._connection;
   }
 
   /**
    * Indicates whether two way communication has successfully been established with the embedded content.
    */
 
-  get isConnected () {
-    return !!this._connection
+  get isConnected() {
+    return !!this._connection;
   }
 
-  private async createIframe (url: string) {
-    this._hostBuilder = Chatty.createHost(url)
+  private async createIframe(url: string) {
+    this._hostBuilder = Chatty.createHost(url);
     for (const eventType in this._builder.handlers) {
       for (const handler of this._builder.handlers[eventType]) {
-        this._hostBuilder.on(eventType, handler)
+        this._hostBuilder.on(eventType, handler);
       }
     }
     for (const attr of this._builder.sandboxAttrs) {
-      this._hostBuilder.withSandboxAttribute(attr)
+      this._hostBuilder.withSandboxAttribute(attr);
     }
+
     this._host = this._hostBuilder
       // tslint:disable-next-line:deprecation
       .frameBorder(this._builder.frameBorder)
       .withTargetOrigin(`https://${this._builder.apiHost}`)
       .appendTo(this._builder.el)
-      .build()
+      .build();
 
-    this._host.iframe.classList.add(...this._builder.classNames)
+    this._host.iframe.classList.add(...this._builder.classNames);
 
-    return this._host.connect()
-      .then((host) => {
-        return new this._builder.clientConstructor(host)
-      })
+    debugger;
+
+    return this._host.connect().then(host => {
+      debugger;
+      return new this._builder.clientConstructor(host);
+    });
   }
 
-  private async createUrl () {
-    const src = this._builder.embedUrl
-    if (!this._builder.authUrl) return src
+  private async createUrl() {
+    const src = this._builder.embedUrl;
+    if (!this._builder.authUrl) return src;
 
-    const url = `${this._builder.authUrl}?src=${encodeURIComponent(src)}`
+    const url = `${this._builder.authUrl}?src=${encodeURIComponent(src)}`;
 
     return new Promise<string>(async (resolve, reject) => {
       // compute signature
-      const xhr = new XMLHttpRequest()
-      xhr.open('GET', url)
-      xhr.setRequestHeader('Cache-Control', 'no-cache')
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.onload = () => {
         if (xhr.status === 200) {
-          resolve(JSON.parse(xhr.responseText).url)
+          resolve(JSON.parse(xhr.responseText).url);
         } else {
-          reject(xhr.statusText)
+          reject(xhr.statusText);
         }
-      }
-      xhr.onerror = () => reject(xhr.statusText)
-      xhr.send()
-    })
+      };
+      xhr.onerror = () => reject(xhr.statusText);
+      xhr.send();
+    });
   }
 
   /**
@@ -111,14 +114,16 @@ export class EmbedClient<T> {
    * client that can be used to send messages to the embedded content.
    */
 
-  async connect (): Promise<T> {
-    if (this._connection) return this._connection
+  async connect(): Promise<T> {
+    if (this._connection) return this._connection;
 
     if (this._builder.url) {
-      this._connection = this.createIframe(this._builder.url)
+      this._connection = this.createIframe(this._builder.url);
     } else {
-      this._connection = this.createUrl().then(async (url) => this.createIframe(url))
+      this._connection = this.createUrl().then(async url =>
+        this.createIframe(url)
+      );
     }
-    return this._connection
+    return this._connection;
   }
 }
